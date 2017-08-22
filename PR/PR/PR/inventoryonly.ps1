@@ -41,6 +41,10 @@ function Import-Module-SqlServer{
         Import-Module "sqlps" -DisableNameChecking
         Write-Host "    Done"
     }
+	else
+	{
+	Write-Host 'found'
+	}
 }
 
 Import-Module-SqlServer;
@@ -202,9 +206,9 @@ Foreach ($s in $servers)
 			Add-Member -inputObject $infoObject -memberType NoteProperty -name "SQL Server" -value $($sqlserver);
 		}
 		
-		}
+}
 
-	}
+	
 
 	$infoObject #Output to the screen for a visual feedback.
 

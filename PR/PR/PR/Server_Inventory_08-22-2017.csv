@@ -1,0 +1,6 @@
+"ServerName","Processor","Model","Manufacturer","PhysicalCores","CPU_L2CacheSize","CPU_L3CacheSize","Sockets","LogicalCores","OS_Name","OS_Version","Service Pack","TotalPhysical_Memory_GB","IIS_Version","OS_Type","C:TotalDisk (GB)","C:FreeDisk  (GB)","C:Percentage_diskspace_remaining","DriveInfo","SQL Server"
+"LT-PGA1-T-UK","Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz","Intel64 Family 6 Model 94 Stepping 3","GenuineIntel","4","1024","8192","U3E1","8","Microsoft Windows 10 Enterprise","10.0.15063","0","32","Version 10.0","64","953.32","363.18","38.1","0 THNSN51T02DU7 TOSHIBA SSD","Microsoft SQL Server 2016 (RTM-GDR) (KB4019088) - 13.0.1742.0 (X64) 
+	Jul  5 2017 23:41:17 
+	Copyright (c) Microsoft Corporation
+	Enterprise Edition (64-bit) on Windows 10 Enterprise 6.3 <X64> (Build 15063: ) (Hypervisor)
+"
