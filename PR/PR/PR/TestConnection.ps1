@@ -1,0 +1,3 @@
+#
+# testconnection.ps1
+#

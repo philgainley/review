@@ -17,9 +17,10 @@ and will run IIS at the end
 The script will execute the commands on multiple machines sequentially using non-concurrent sessions. This will process all servers from Serverlist.txt in the listed order.
 The info will be exported to a csv format.
 Requires: Serverlist.txt must be created in the same folder where the script is.
-File Name  : get-server-info.ps1
 
 This will create a csv file
+
+It may fail give errors on Invoke-SqlCmd and Get-WmiObject if these are an old version of the server / doesnt have the right tools but will still generate the csv for what it can
 
 #>
 
@@ -32,6 +33,25 @@ Set-ExecutionPolicy -Scope CurrentUser  -ExecutionPolicy 'Unrestricted';
 
 Write-Host 'Press y and press enter using serverlist.txt (not supported yet)'
 $uselocalhostonly =  Read-Host
+
+$canrunsql = $true;
+function Import-Module-SqlServer{
+    if (!(Get-Command Invoke-Sqlcmd -ErrorAction SilentlyContinue)){
+        Write-Host "Loading SQL Server PowerShell module..."
+        Import-Module "sqlps" -DisableNameChecking
+        Write-Host "    Done"
+    }
+}
+
+Import-Module-SqlServer;
+
+if (!(Get-Command Invoke-Sqlcmd -ErrorAction SilentlyContinue))
+{
+	$canrunsql = $false;
+	Write-Host -ForegroundColor Red 'Cannot load sql server you will have to check manually please';
+
+}
+
 
 if ($uselocalhostonly -eq 'y')
 {
@@ -74,10 +94,13 @@ Function GetDriveTypes()
 # Returns an array of SSD drive letters - if any are found - assuming that the manufacturer inserted the letters SSD into the device name - which ultimately makes this method unreliable so beware to cross check using something like $DiskScore = (Get-WmiObject -Class Win32_WinSAT).DiskScore # Thanks to Rens Hollanders for this! http://renshollanders.nl/2013/01/sccm-mdt-identifying-ssds-from-your-task-sequence-by-windows-performance-index/
 # http://stackoverflow.com/questions/28731401/powershell-detect-if-drive-letter-is-mounted-on-a-ssd-solid-state-disk/28731402#28731402
 {
+
+# TODO need to test against wmi namespace - this will error..
+
 	try
 	{
 	  $hash = @{0='Unknown'; 3='HDD'; 4='SSD'; 5='SCM'};
-	 $ssdresult = Get-WmiObject -namespace root\Microsoft\Windows\Storage MSFT_PhysicalDisk | Select-Object DeviceID,Model,@{LABEL='DriveType';EXPRESSION={$hash.item([int]$_.MediaType)}}   
+	$ssdresult = Get-WmiObject -namespace root\Microsoft\Windows\Storage MSFT_PhysicalDisk | Select-Object DeviceID,Model,@{LABEL='DriveType';EXPRESSION={$hash.item([int]$_.MediaType)}}   
 	$couldrunssd = $true;
 	 return $ssdresult;
 	 }
@@ -173,8 +196,13 @@ Foreach ($s in $servers)
 #	Write-Host 'checking for sql (if this is not here there will be a 5 second delay)'
 	if ($hassql -eq $true)
 	{
-		$sqlserver = $(Invoke-SqlCmd -query "select @@version" -ServerInstance "localhost").Column1
-		Add-Member -inputObject $infoObject -memberType NoteProperty -name "SQL Server" -value $($sqlserver);
+		if ($canrunsql -eq $true)
+		{
+			$sqlserver = $(Invoke-SqlCmd -query "select @@version" -ServerInstance "localhost").Column1
+			Add-Member -inputObject $infoObject -memberType NoteProperty -name "SQL Server" -value $($sqlserver);
+		}
+		
+		}
 
 	}
 
