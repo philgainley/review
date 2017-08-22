@@ -1,3 +1,36 @@
+<#
+.SYNOPSIS
+Will look at code review
+.DESCRIPTION
+Recursivily looks through the solution looking for file types and parses each one
+
+NOTE.. function runs "deleteirreletantcontents"  method that emptys out media folder if there is one so i dont have
+to parse it at the moment.. but ideally we should search for stuff first in that folder then delete it..
+
+Change $location to where the code starts from and press enter. you will have to type in your domain name you are interested in as well
+
+this will tell you things like (just on output.. not csv file)
+
+1) anyone having dlls outside of the bin
+2) how much searialisation and what type are they using, doesnt break down how many projects.. etc
+3) hard coded use of domain
+4) lots of hard coded values from queries, to fields, to xpaths to dynamic typing, dictionary, see $phrasestoflag object
+5) flag if xslt is there
+6) flag any publishing files
+7) flag any asmx
+8) flag any ascx
+9) check for uploadwatcher
+10) check for feedrequesthandler
+11) flag .example or .disabled and a bunch of other files
+12) flat what sitecore modules (maybe)
+
+.NOTES  
+
+
+
+#>
+
+
 [string]$location = ""
 
 # use mydomain.com
