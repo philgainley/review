@@ -28,15 +28,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="NewFolder1\" />
     <Folder Include="PR\" />
     <Folder Include="Policing\" />
+    <Folder Include="sql_Related\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PR\codereview.ps1" />
     <Compile Include="PR\comparetreestructure.ps1" />
     <Compile Include="PR\inventoryonly.ps1" />
     <Compile Include="Policing\naming.ps1" />
+    <Compile Include="sql_Related\getdb.ps1" />
     <Compile Include="sql_Related\get_dacpac.ps1" />
+    <Compile Include="sql_Related\identifyindexes.ps1" />
     <Compile Include="sql_Related\RemoveMasterKey.ps1" />
     <Compile Include="sql_Related\renameazuredb.ps1" />
   </ItemGroup>

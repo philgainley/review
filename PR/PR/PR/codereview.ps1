@@ -31,7 +31,7 @@ this will tell you things like (just on output.. not csv file)
 #>
 
 
-[string]$location = ""
+[string]$location = "C:\clients\cityandguilds\CGBAU\CGBAU\"
 
 # use mydomain.com
 [string]$domain = read-host
@@ -51,19 +51,31 @@ this will tell you things like (just on output.. not csv file)
 
 
 
-[string[]]$phrasestoflag = @(
+[string[]]$phrasestoflag = @( 
+'[IndexField(','new IndexField(', #declarative index with an attribute and creating one on the fly
+': IFacet', #custom facet
+': RuleContext', # personalisation rule
+': Command', # custom commands
+'connectionStrings configProtectionProvider="DataProtectionConfigurationProvider"', #check if database settings is encripted
+'.SelectItems(',# identifies xpath
 'SecurityDisabler(' # never switch security
-
-'<style>',
+'XslHelper', #use of xslt renders
+'<style>',#styles overrode on page
+'style=', #inlinecss
 '<script>', # too many script tags
 '@ViewBag.', # find non strongly typed
-
+# this would only be in xslt	 files ----> descendant-or-self, //, descendant
 $domain,
+'.//*',# more sitecore query
+'/*/content', #more sitecore query
+'/sitecore/content//*', #using sitecore query
 'fast:', # using a sql query when they should be using contentsearch api
 'Getdatabase("', # reference fields
-
-'~/media' # hard coded media in solution
-'"{', # find the guids
+'Axes.GetAncestors', # get ancestors
+'Axes.GetDescendants', #get descendants
+'~/media' # hard coded media in solution,
+'-/media' # hard coded media in solution
+'ID("{', # find the guids
 'Sitecore.Data.ID("',# find the guids
 'Html.Sitecore().Dictionary("', #find use of dictionary
 
@@ -79,10 +91,12 @@ $domain,
 'Page.Session["', # storing session variables
 '@Html.Sitecore().ControllerRendering(', #static controller rendering
 '/*', # blanket comment
-'// TODO' ## single comment
+'// TODO', ## single comment
 '/Sitecore/', #using a path when should be using a guid
-'Sitecore.Context.Site.StartPath' # might be ok but depends on use.
-
+'Sitecore.Context.Site.StartPath', # might be ok but depends on use.
+'Container.DataItem' #consider an upgrade as we havent done binding like this since .net 2 in an ascx view as we are casting
+'CommandType.Text' # inline sql
+'CommandType.TableDirect'#using sql command
 
 # glassmapper based stuff
 
@@ -118,6 +132,7 @@ $testprojects = New-Object System.Collections.ArrayList
 [string]$warning = "warning";
 [string]$error = "error";
 [string]$info = "informational";
+[bool] $usescustomtokens = $false;
 
 [string]$category_hardcoded= "hardcoded";
 [string]$category_filesettings= "filesetting";
@@ -314,6 +329,12 @@ function processcsfile($file)
   [string]$filecontents = Get-Content $file;
     $filecontents = $filecontents.ToLower();
     processhardcoded($filecontents);
+
+	if ($filecontents.Contains("ExpandInitialFieldValueProcessor") -eq $true)
+	{
+	$usescustomtokens = $true;
+	WriteLog -messagetype $info -category $info -message $('found token ' +$file)
+	}
 }
 
 function processcshtmlfile([string]$file)
@@ -684,6 +705,14 @@ separator;
 Write-Host 'Hard coded values found'
 $hardcoded
 separator;
+if ($usescustomtokens -eq $true)
+{
+	Write-Host 'Found custom tokens please look at the information';
+}
+else
+{
+Write-Host 'no custom tokens found';
+}
 Write-Host 'upload watcher exists (hoping for false)'  	$finduploadwatcher
 Write-Host 'feed handler exists (hoping for false)'  	$foundfeedhandler
 CheckCSProjToTest;
